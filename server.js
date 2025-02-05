@@ -51,6 +51,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-app.listen(Port, () => {
+app.listen(Port || process.env.PORT, () => {
   console.log(`Server is running on port: ${Port}`);
 });
