@@ -15,7 +15,7 @@ const {
 } = require("./config/errors");
 
 const app = express();
-const Port = 5000;
+const Port = 5000 ||process.env.PORT;
 
 // Middleware
 
