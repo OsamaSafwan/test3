@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
 const serviceAccount = require("../config/push-notification-key.json");
-
+const getUserDataQuery =
+  "SELECT username, Notification_intensity FROM users WHERE intensity = ?";
 //  Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -8,6 +9,12 @@ admin.initializeApp({
 
 exports.sendPushNotification = (req, res) => {
   try {
+    if (!req.body.FCM || !req.body.FCM.token) {
+      return res
+        .status(400)
+        .json({ message: "FCM token is required in the request body" });
+    }
+
     const message = {
       notification: {
         title: "Test Notification",
@@ -20,23 +27,36 @@ exports.sendPushNotification = (req, res) => {
       token: req.body.FCM.token,
     };
 
-    // send notication
-    admin
-      .messaging()
-      .send(message)
-      .then((response) => {
-        return res
-          .status(200)
-          .send({ message: "Notification sent successfully", response });
-      })
-      .catch((error) => {
+    // Retrieve users with the same intensity from the database
+    db.query(getUserDataQuery, [req.body.intensity], (err, results) => {
+      if (err) {
         return res
           .status(500)
-          .send({ message: "Error sending notification", error });
-      });
+          .json({ message: "Error retrieving user data", error: err });
+      }
+
+      const users = results.map((user) => user.username);
+      message.notification.title = `Alert for intensity ${
+        req.body.intensity
+      } for users: ${users.join(", ")}`;
+
+      admin
+        .messaging()
+        .send(message)
+        .then((response) => {
+          return res
+            .status(200)
+            .json({ message: "Notification sent successfully", response });
+        })
+        .catch((error) => {
+          return res
+            .status(500)
+            .json({ message: "Error sending notification", error });
+        });
+    });
   } catch (err) {
     return res
       .status(500)
-      .send({ message: "Unexpected error", error: err.message });
+      .json({ message: "Unexpected error", error: err.message });
   }
 };
