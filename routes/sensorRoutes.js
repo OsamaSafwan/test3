@@ -39,7 +39,6 @@ const recordMaxValue = () => {
 router.post("/sensor-data", (req, res, next) => {
   const { intensity } = req.body;
 
-  // التحقق من صحة البيانات
   if (typeof intensity !== "number") {
     return next(new ValidationError("Invalid data: intensity is required."));
   }
