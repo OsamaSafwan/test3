@@ -12,7 +12,6 @@ admin.initializeApp({
 
 exports.sendPushNotification = (req, res) => {
   try {
-    // تحقق من وجود FCM token و intensity
     if (!req.body.FCM || !req.body.FCM.token) {
       return res
         .status(400)
@@ -36,10 +35,9 @@ exports.sendPushNotification = (req, res) => {
       token: req.body.FCM.token,
     };
 
-    // استرجاع المستخدمين بناءً على الشدة
     db.query(getUserDataQuery, [req.body.intensity], (err, results) => {
       if (err) {
-        console.error("Error retrieving user data:", err); // سجل الخطأ
+        console.error("Error retrieving user data:", err);  
         return res
           .status(500)
           .json({ message: "Error retrieving user data", error: err.message });
@@ -60,7 +58,7 @@ exports.sendPushNotification = (req, res) => {
               .json({ message: "Notification sent successfully", response });
           })
           .catch((error) => {
-            console.error("Error sending notification:", error); // سجل الخطأ
+            console.error("Error sending notification:", error);    
             return res.status(500).json({
               message: "Error sending notification",
               error: error.message,
@@ -73,7 +71,7 @@ exports.sendPushNotification = (req, res) => {
       }
     });
   } catch (err) {
-    console.error("Unexpected error:", err); // سجل الخطأ
+    console.error("Unexpected error:", err);  
     return res
       .status(500)
       .json({ message: "Unexpected error", error: err.message });
