@@ -15,7 +15,7 @@ const collectSensorData = (intensity) => {
 const recordMaxValue = () => {
   if (sensorDataBuffer.length > 0) {
     const maxIntensity = Math.max(...sensorDataBuffer);
-    const time_happend = new Date().toISOString(); // مثال على كيفية الحصول على الطابع الزمني
+    const time_happend = new Date().toISOString(); 
     const query =
       "INSERT INTO sensor_data (intensity, time_happend, location) VALUES (?, ?, ?)";
 
