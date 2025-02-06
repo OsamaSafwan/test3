@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("push-notification-key");
+const serviceAccount = require("../config/push-notification-key");
 const getUserDataQuery =
   "SELECT username FROM users WHERE Notification_intensity = ?";
 const mysql = require("mysql2");
